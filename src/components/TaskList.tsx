@@ -29,7 +29,7 @@ class TaskList extends React.Component<{}, ITaskState> {
       <div className="task-list">
         
           {tasks.map((c: any) => 
-            <div className="internal-tasks" key={c.AssignmentId}><span className="task">Item: {c.EntityName}</span></div>
+            <div className="internal-tasks" key={c.AssignmentId}>Item: {c.EntityName} (Created by: {c.CreatedBy} on {c.CreatedOnDate})</div>
           )}
         
         <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>
