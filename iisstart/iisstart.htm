@@ -1,0 +1,33 @@
+<div>This is the testing of flow running in the Iframe and a clear example for resizing the frame or closing the frame.<div>
+
+<br/>
+Click the button below to run a flow
+<br/><br/>
+<button onclick='javascript: document.getElementById("iframeworkflowchild").style = "display: block;";'>Apply Now</button>
+
+<center><Iframe onload="onMyFrameLoad(this)"  
+	id="iframeworkflowchild" 
+	src="http://localhost/decisions/Primary/H/?FlowId=7ef8e4f3-645f-11e8-9d94-34f64bb288a0&ForceFormat=true&Location=Center&Chrome=Off&Border=Trueh" height="70%" width="75%" style="display: none;"></iframe></center>
+	
+<script>
+// debugger
+
+function onMyFrameLoad(frame) {
+	// This is the really important bit
+	// that detects when the flow engine sends 
+	// a flowExecutionCompleted event without any 
+	// special end step at all.
+	frame.contentWindow.$( "div[id^='formWrapper']").on("flowExecutionCompleted", function(event) {
+	   // alert("Flow completed!!");
+	   document.getElementById('iframeworkflowchild').style = 'display: none';
+	});
+	
+	// When second form in set is different size...
+	// frame needs to resize at that moment.
+	frame.contentWindow.$(frame.contentWindow.document).on("FormLoadComplete", function(resizeObj) {
+		if (false === resizeObj.isResized) {
+			alert("height:"+resizeObj.FormSurfaceElem.height()+ " width:"+resizeObj.FormSurfaceElem.width())
+		}
+	});
+}
+</script>
