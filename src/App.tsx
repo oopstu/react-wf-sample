@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./App.css";
-import ContactList from "./components/ContactList";
+import TaskList from "./components/TaskList";
 import logo from "./logo.svg";
 
 
@@ -13,15 +13,18 @@ const contacts = [
 ];
 
 class App extends React.Component {
+
+  
+
   public render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">React Contact Manager</h1>
+          <h1 className="App-title">React Based Workflow Task Example</h1>
         </header>
 
-        <ContactList contacts={contacts} />
+        <TaskList tasks={contacts} />
       </div>
     );
   }
