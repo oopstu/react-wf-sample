@@ -14,7 +14,13 @@ const contacts = [
 
 class App extends React.Component {
 
-  
+  private sessionId : string;
+
+  public componentDidMount() {
+    // // tslint:disable-next-line
+    // debugger;
+    this.GetSessionAndGetTasks();
+  }
 
   public render() {
     return (
@@ -28,6 +34,37 @@ class App extends React.Component {
       </div>
     );
   }
+
+  
+  private GetSessionAndGetTasks() {
+    // Start the fetch!
+    fetch("http://localhost/decisions/Primary/REST/AccountService/LoginUser?userid=admin@decisions.com&password=admin&outputType=JSON", {
+      // headers:{
+      //   "Access-Control-Allow-Headers": "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
+      //   "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT",
+      //   'Access-Control-Allow-Origin':'*',
+      //   }, 
+      // mode: "cors",
+    }).then(response => {
+      return response.json();
+    }).then(LoginUserResult => {
+      this.sessionId = this.GetSessionIdFromResult(LoginUserResult);
+      // tslint:disable-next-line
+      console.log(this.sessionId);
+    }).catch(err => {
+        // tslint:disable-next-line
+        console.log(err);
+      });
+  }
+
+  private GetSessionIdFromResult(LoginUserResult: any) : string {
+    // // tslint:disable-next-line
+    // console.log(LoginUserResult);
+    return LoginUserResult.SessionValue;
+    
+  }
+
+ 
 }
 
 export default App;
