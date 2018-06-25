@@ -1,0 +1,69 @@
+import * as React from 'react';
+import './App.css';
+
+import logo from './logo.svg';
+
+class App extends React.Component {
+
+  public sessionId: string;
+
+  constructor(props: any) {
+    super(props);
+    this.sessionId = "";
+    this.state = {
+
+    };
+  }
+
+  public componentDidMount() {
+    // // tslint:disable-next-line
+    // debugger;
+    this.GetSessionAndGetTasks();
+  }
+
+  public render() {
+    const hits = this.state;
+
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">Welcodme to React</h1>
+        </header>
+        <p className="App-intro">
+          <div><span>{JSON.stringify(hits)}</span></div>
+        </p>
+      </div>
+    );
+  }
+
+  private GetSessionAndGetTasks() {
+    // Start the fetch!
+    fetch("http://localhost/decisions/Primary/REST/AccountService/LoginUser?userid=admin@decisions.com&password=admin&outputType=JSON", {
+      // headers:{
+      //   "Access-Control-Allow-Headers": "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
+      //   "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT",
+      //   'Access-Control-Allow-Origin':'*',
+      //   }, 
+      // mode: "cors",
+    }).then(response => {
+      return response.json();
+    }).then(LoginUserResult => {
+      this.GetSessionIdFromResult(LoginUserResult);
+    }).catch(err => {
+        // tslint:disable-next-line
+        console.log(err);
+      });
+  }
+
+  private GetSessionIdFromResult(LoginUserResult: object) {
+    // // tslint:disable-next-line
+    // console.log(LoginUserResult);
+    this.setState({ hits: LoginUserResult });
+    
+  }
+
+ 
+}
+
+export default App;
