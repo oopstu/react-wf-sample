@@ -1,9 +1,10 @@
 
 import * as React from "react";
+import DecisionsIFrame from './DecisionsIFrame';
 // import the Task component
-import './Task.css'
+import './Task.css';
 
-interface ITaskState { tasks: any[] };
+interface ITaskState { tasks: any[], clicked: boolean };
 class TaskList extends React.Component<{}, ITaskState> {
 
   private sessionId: string;
@@ -11,8 +12,11 @@ class TaskList extends React.Component<{}, ITaskState> {
   constructor(props: any) {
 
     super(props);
+    this.handleBtnClick = this.handleBtnClick.bind(this);
     this.state = {
-      tasks: [],
+      clicked: false,
+      tasks: []
+      
     }
   }
 
@@ -24,16 +28,28 @@ class TaskList extends React.Component<{}, ITaskState> {
 
   public render() {
     const { tasks } = this.state;
+    const clicked = this.state.clicked;
+    let button;
+
+    if (clicked) {
+       button = <DecisionsIFrame  />;
+    }
 
     return (
       <div className="task-list">
-        
+          
           {tasks.map((c: any) => 
-            <div className="internal-tasks" key={c.AssignmentId}>Item: {c.EntityName} (Created by: {c.CreatedBy} on {c.CreatedOnDate})</div>
+            // tslint:disable-next-line jsx-no-lambda
+            <div className="internal-tasks" key={c.AssignmentId} onClick={ e => this.handleBtnClick(e) }>Item: {c.EntityName} (Created by: {c.CreatedBy} on {c.CreatedOnDate})</div>            
           )}
         
-        <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>
-      </div>
+        <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>    
+         <button onClick={this.handleBtnClick}>
+      Show
+    </button>
+
+        {button}
+		  </div>
     );
   }
 
@@ -92,6 +108,9 @@ class TaskList extends React.Component<{}, ITaskState> {
 
   }
 
+  private handleBtnClick(event: any) : void {	 
+    this.setState( { clicked: !this.state.clicked } );
+  }
  
 }
 export default TaskList;
