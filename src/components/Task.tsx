@@ -5,7 +5,8 @@ interface ITaskProps {
     name: string,
     createdBy: string,
     createdOnDate: any,
-    onClick: () => void;
+    priority: string,
+    onClick: () => void
 };
 
 class Task extends React.Component<ITaskProps, ITaskProps> {
@@ -19,7 +20,11 @@ class Task extends React.Component<ITaskProps, ITaskProps> {
             key={this.props.id}
             // tslint:disable-next-line jsx-no-lambda
             onClick={e => this.props.onClick()}>
-            Item: {this.props.name} (Created by: {this.props.createdBy} on {this.props.createdOnDate})
+            <div className="internal-tasks__info">
+                <span>{this.props.name}</span>
+                <div>Created by <span>{this.props.createdBy}</span> on <span>{new Date(this.props.createdOnDate).toLocaleDateString()}</span></div>
+            </div>    
+            <div><span>Priority: </span><span>{this.props.priority}</span></div>
         </div>);
     }
 }

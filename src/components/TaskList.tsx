@@ -33,7 +33,9 @@ class TaskList extends React.Component<{}, ITaskState> {
 
         {tasks.map((task: any) =>
           // tslint:disable-next-line jsx-no-lambda
-          <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate} onClick={() => this.handleBtnClick(task.id)}/>
+          <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} onClick={() => this.handleBtnClick(task.id)}
+          createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
+          priority={task.Priority} />
         )}
 
         <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>
