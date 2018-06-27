@@ -4,7 +4,7 @@ import DecisionsIFrame from './DecisionsIFrame';
 // import the Task component
 import './Task.css';
 
-interface ITaskState { tasks: any[], clicked: boolean };
+interface ITaskState { tasks: any[], clicked: boolean, iFrameURL: string };
 class TaskList extends React.Component<{}, ITaskState> {
 
   private sessionId: string;
@@ -15,6 +15,7 @@ class TaskList extends React.Component<{}, ITaskState> {
     this.handleBtnClick = this.handleBtnClick.bind(this);
     this.state = {
       clicked: false,
+      iFrameURL: "",
       tasks: []
       
     }
@@ -40,15 +41,17 @@ class TaskList extends React.Component<{}, ITaskState> {
           
           {tasks.map((c: any) => 
             // tslint:disable-next-line jsx-no-lambda
-            <div className="internal-tasks" key={c.AssignmentId} onClick={ e => this.handleBtnClick(e) }>Item: {c.EntityName} (Created by: {c.CreatedBy} on {c.CreatedOnDate})</div>            
+            <div className="internal-tasks" 
+              key={c.AssignmentId} 
+              onClick={ e => this.handleBtnClick(e) }>
+                  Item: {c.EntityName} (Created by: {c.CreatedBy} on {c.CreatedOnDate})
+            </div>            
           )}
         
         <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>    
-         <button onClick={this.handleBtnClick}>
-      Show
-    </button>
 
         {button}
+
 		  </div>
     );
   }
@@ -109,7 +112,9 @@ class TaskList extends React.Component<{}, ITaskState> {
   }
 
   private handleBtnClick(event: any) : void {	 
-    this.setState( { clicked: !this.state.clicked } );
+      // tslint:disable-next-line
+      
+    this.setState( { clicked: !this.state.clicked, iFrameURL: "" } );
   }
  
 }
