@@ -1,6 +1,6 @@
 
 import * as React from "react";
-// import the Task component
+import Task from './Task';
 import './Task.css';
 
 interface ITaskState { tasks: any[], iFrameURL: string };
@@ -12,11 +12,10 @@ class TaskList extends React.Component<{}, ITaskState> {
   constructor(props: any) {
 
     super(props);
-    this.handleBtnClick = this.handleBtnClick.bind(this);
+    
     this.state = {
       iFrameURL: "",
       tasks: []
-
     }
   }
 
@@ -34,29 +33,28 @@ class TaskList extends React.Component<{}, ITaskState> {
 
         {tasks.map((task: any) =>
           // tslint:disable-next-line jsx-no-lambda
-          <div className="internal-tasks"
-            key={task.AssignmentId}
-            // tslint:disable-next-line jsx-no-lambda
-            onClick={e => this.handleBtnClick(e, task.AssignmentId)}>
-            Item: {task.EntityName} (Created by: {task.CreatedBy} on {task.CreatedOnDate})
-            </div>
+          <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate} onClick={() => this.handleBtnClick(task.id)}/>
         )}
 
         <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>
 
         {
           // tslint:disable-next-line jsx-no-lambda
-          (this.state.iFrameURL.length || this.state.iFrameURL.length > 1) ? <iframe src={this.state.iFrameURL} onLoad={ev => this.doMyFrameLoad} className={"task-present"} /> : ''
+          (this.state.iFrameURL.length || this.state.iFrameURL.length > 1) ? 
+            <iframe src={this.state.iFrameURL} onLoad={this.doMyFrameLoad} className={"task-present"} /> : ''
         }
       </div>
     );
   }
 
-  private doMyFrameLoad(frame: any) {
-    // This is the really important bit
+  private doMyFrameLoad(event: any) {
+        // This is the really important bit
     // that detects when the flow engine sends 
     // a flowExecutionCompleted event without any 
     // special end step at all.
+    const frame = event.currentTarget;
+    // Heath, here is the cross-origin error appears...  
+    // Uncaught DOMException: Blocked a frame with origin "http://localhost:3000" from accessing a cross-origin frame.
     frame.contentWindow.$("div[id^='formWrapper']").on("flowExecutionCompleted", () => {
       // alert("Flow completed!!");
       // document.getElementById('iframeworkflowchild').style.display = 'none';
@@ -65,11 +63,11 @@ class TaskList extends React.Component<{}, ITaskState> {
 
     // When second form in set is different size...
     // frame needs to resize at that moment.
-    frame.contentWindow.$(frame.contentWindow.document).on("FormLoadComplete",  (resizeObj: any) => {
-      if (false === resizeObj.isResized) {
-        alert("height:" + resizeObj.FormSurfaceElem.height() + " width:" + resizeObj.FormSurfaceElem.width())
-      }
-    });
+    // $(frame.contentWindow.document).on("FormLoadComplete",  (resizeObj: any) => {
+    //   if (false === resizeObj.isResized) {
+    //     alert("height:" + resizeObj.FormSurfaceElem.height() + " width:" + resizeObj.FormSurfaceElem.width())
+    //   }
+    // });
   }
 
   private GetSessionAndGetTasks() {
@@ -122,7 +120,7 @@ class TaskList extends React.Component<{}, ITaskState> {
 
   }
 
-  private handleBtnClick(event: any, taskId: string): void {
+  private handleBtnClick(taskId: string): void {
     // tslint:disable-next-line
 
     const url = `http://localhost/decisions/?assignmentId=${taskId}&sessionid=${this.sessionId}&chrome=off&border=true`

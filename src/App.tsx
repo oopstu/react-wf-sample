@@ -15,10 +15,14 @@ class App extends React.Component {
   }
 
   public render() {
+    const divStyle = {paddingTop: '30px'};
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <div style={divStyle}>
+            <img src={logo} className="react-logo" alt="react" />
+            <img src='decisions-logo.svg' className="decisions-logo" alt="decisions" />
+          </div>
           <h1 className="App-title">React Based Workflow Task Example</h1>
         </header>
 
