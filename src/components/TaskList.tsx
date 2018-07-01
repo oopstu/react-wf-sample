@@ -1,4 +1,3 @@
-
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -6,6 +5,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import * as React from "react";
+
+import { TaskApi } from '../task.api';
 import Task from './Task';
 import './Task.css';
 
@@ -33,9 +34,11 @@ class TaskList extends React.Component<{}, ITaskState> {
   }
 
   public componentDidMount() {
-    // // tslint:disable-next-lines
-    // debugger;
-    this.GetSessionAndGetTasks();
+    TaskApi.login().then((sessionId) => {
+      TaskApi.fetchCurrent(sessionId).then((tasks) => {
+        this.setState({ tasks });
+      });
+    });
   }
 
   public render() {
@@ -102,56 +105,6 @@ class TaskList extends React.Component<{}, ITaskState> {
     //     alert("height:" + resizeObj.FormSurfaceElem.height() + " width:" + resizeObj.FormSurfaceElem.width())
     //   }
     // });
-  }
-
-  private GetSessionAndGetTasks() {
-    // Start the fetch!
-    fetch("http://localhost/decisions/Primary/REST/AccountService/LoginUser?userid=admin@decisions.com&password=admin&outputType=JSON", {
-      // headers:{
-      //   "Access-Control-Allow-Headers": "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
-      //   "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT",
-      //   'Access-Control-Allow-Origin':'*',
-      //   }, 
-      // mode: "cors",
-    }).then(response => {
-      return response.json();
-    }).then(LoginUserResult => {
-      // tslint:disable-next-line
-      // console.log("Getting session id from result: " + JSON.stringify(LoginUserResult));
-      this.sessionId = this.GetSessionIdFromResult(LoginUserResult);
-      // tslint:disable-next-line
-      console.log(this.sessionId);
-      this.GetTasksWithSessionId();
-
-    }).catch(err => {
-      // tslint:disable-next-line
-      console.log(err);
-    });
-  }
-
-  private GetSessionIdFromResult(ResponseData: any): string {
-    // // tslint:disable-next-line
-    // console.log(LoginUserResult);
-    return ResponseData.LoginUserResult.SessionValue;
-
-  }
-
-  private GetTasksWithSessionId() {
-    // 
-    fetch("http://localhost/decisions/Primary/REST/Assignment/GetMyCurrentAssignments?sessionId=" + this.sessionId + "&outputType=JSON")
-      .then(response => {
-        return response.json();
-      }).then(CurrentTasksResult => {
-        // tslint:disable-next-line
-        console.log("CurrentTasks result: " + JSON.stringify(CurrentTasksResult.GetMyCurrentAssignmentsResult));
-        this.setState({ tasks: CurrentTasksResult.GetMyCurrentAssignmentsResult });
-        // tslint:disable-next-line
-        console.log("State: " + JSON.stringify(this.state.tasks[0]));
-      }).catch(err => {
-        // tslint:disable-next-line
-        console.log(err);
-      });
-
   }
 
   private handleBtnClick(taskId: string): void {
