@@ -7,34 +7,43 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import * as React from "react";
 
 import { TaskApi } from '../task.api';
+
 import Task from './Task';
+import TaskCard from './Card';
+
 import './Task.css';
 
-interface ITaskState {
+import NavBar from './NavBar';
+
+interface ITaskListState {
+  sessionId: string,
   isDialogOpen: boolean
   iFrameURL: string,
   tasks: any[],
+  currentView: number
 };
 
-class TaskList extends React.Component<{}, ITaskState> {
-
-  private sessionId: string;
+class TaskList extends React.Component<{}, ITaskListState> {
 
   constructor(props: any) {
 
     super(props);
 
     this.state = {
+      currentView: 0,
+      sessionId: "",
       iFrameURL: "",
       isDialogOpen: false,
       tasks: [],
     }
 
-    this.handleDialogClose.bind(this);
+    this.setView = this.setView.bind(this);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
   }
 
   public componentDidMount() {
     TaskApi.login().then((sessionId) => {
+      this.setState({ sessionId });
       TaskApi.fetchCurrent(sessionId).then((tasks) => {
         this.setState({ tasks });
       });
@@ -43,19 +52,25 @@ class TaskList extends React.Component<{}, ITaskState> {
 
   public render() {
     const { tasks } = this.state;
+    const sortedTasks = tasks.sort(this.sortTasks).reverse();
 
     return (
       <div className="task-list">
-
-        {tasks.map((task: any) =>
-          // tslint:disable-next-line jsx-no-lambda
-          <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} onClick={() => this.handleBtnClick(task.id)}
-            createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
-            priority={task.Priority} />
-        )}
+        <NavBar value={this.state.currentView} onChange={this.setView} />
 
         <div className="task-count"><span>Task Count: {this.state.tasks.length}</span></div>
 
+        {sortedTasks.map((task: any) =>
+          (this.state.currentView === 0) ?
+            <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} onClick={this.handleBtnClick.bind(this, task.AssignmentId)}
+              createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
+              priority={task.Priority} /> :
+            <TaskCard key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName}
+              createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
+              priority={task.Priority} onClick={this.handleBtnClick.bind(this, task.AssignmentId)}
+              description={task.EntityDescription} />
+        )}
+        
         <Dialog
           open={this.state.isDialogOpen}
           onClose={this.handleDialogClose}
@@ -69,7 +84,7 @@ class TaskList extends React.Component<{}, ITaskState> {
                 <iframe src={this.state.iFrameURL} onLoad={this.doMyFrameLoad} className={"task-present"} /> : ''
             }
           </DialogContent>
-          <DialogActions>              
+          <DialogActions>
             <Button onClick={this.handleDialogClose} color="primary">
               Close
             </Button>
@@ -79,10 +94,29 @@ class TaskList extends React.Component<{}, ITaskState> {
     );
   }
 
+  private setView(view: number) {
+    this.setState({ currentView: view });
+  }
+
+  private sortTasks(a: any, b: any) {
+    if (!a.Priority && !b.Priority) { return 0; }
+    if (a.Priority && !b.Priority) { return 1; }
+    if (!a.Priority && b.Priority) { return -1; }
+
+    return a.Priority.localeCompare(b.Priority);
+  }
+
   private handleDialogClose = () => {
     this.setState({ isDialogOpen: false });
   };
 
+  private handleBtnClick(taskId: string): void {
+    const url = `http://localhost/decisions/?assignmentId=${taskId}&sessionid=${this.state.sessionId}&chrome=off&border=true`
+    this.setState({
+      iFrameURL: url,
+      isDialogOpen: true
+    });
+  }
 
   private doMyFrameLoad(event: any) {
     // This is the really important bit
@@ -107,15 +141,7 @@ class TaskList extends React.Component<{}, ITaskState> {
     // });
   }
 
-  private handleBtnClick(taskId: string): void {
-    // tslint:disable-next-line
 
-    const url = `http://localhost/decisions/?assignmentId=${taskId}&sessionid=${this.sessionId}&chrome=off&border=true`
-    this.setState({
-      iFrameURL: url,
-      isDialogOpen: true
-    });
-  }
 
 }
 
