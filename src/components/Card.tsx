@@ -18,11 +18,18 @@ const styles = {
   root: {
     display: 'inline'
   },
+  cardholder: {
+    display: 'inline-block', 
+    'padding': 0
+  },
   card: {
     minWidth: 275,
     width: 275,
     height: 375,
-    margin: 10
+    margin: 10,
+    '&:hover': {
+      background: '#007ab880'
+    }
   },
   bullet: {
     display: 'inline-block',
@@ -30,7 +37,10 @@ const styles = {
     transform: 'scale(0.8)',
   },
   headline: {
-    height: 300
+    overflow:'hidden', 
+    height: 165, 
+    padding: 5,
+    'word-wrap': 'break-word'
   },
   title: {
     marginBottom: 6,
@@ -57,15 +67,15 @@ function TaskCard(props: ICardProps) {
   // const bull = <span className={classes.bullet}>•</span>;
   // const inlineStyle = { display: 'inline' };
   const isUrgent = props.priority && props.priority.toLowerCase() === 'urgent';
-  const cardStyle = { display: 'inline-block', background: isUrgent ? '#ff000061' : ''}
+  const cardInlineStyle = { background: isUrgent ? '#ff000061' : ''}
   return (
-    <div style={{display: 'inline-block', 'padding': 0}}>
-      <Card className={classes.card} style={cardStyle}>
+    <div className={classes.cardholder} onClick={props.onClick}>
+      <Card className={classes.card} style={cardInlineStyle}>
         <CardContent style={{height: 288}}>
           <Typography className={classes.title} color="textSecondary">
             {props.priority}
           </Typography>
-          <Typography variant="headline" component="h2" title={props.name} style={{ overflow:'hidden', height: 165, padding: 5}}>
+          <Typography className={classes.headline} variant="headline" component="h2" title={props.name}>
             {props.name}
           </Typography>
           <Typography className={classes.pos} color="textSecondary">

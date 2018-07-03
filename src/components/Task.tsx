@@ -22,7 +22,7 @@ class Task extends React.Component<ITaskProps, ITaskProps> {
             onClick={e => this.props.onClick()}>
             <div className="internal-tasks__info">
                 <span>{this.props.name}</span>
-                <div>Created by <span>{this.props.createdBy}</span> on <span>{new Date(this.props.createdOnDate).toLocaleDateString()}</span></div>
+                <div className='internal-tasks__created'>Created by <span>{this.props.createdBy}</span> on <span>{new Date(this.props.createdOnDate).toLocaleDateString()}</span></div>
             </div>    
             <div><span>Priority: </span><span>{this.props.priority}</span></div>
         </div>);
