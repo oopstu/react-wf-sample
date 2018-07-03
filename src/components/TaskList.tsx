@@ -45,6 +45,8 @@ class TaskList extends React.Component<{}, ITaskListState> {
     TaskApi.login().then((sessionId) => {
       this.setState({ sessionId });
       TaskApi.fetchCurrent(sessionId).then((tasks) => {
+        // tslint:disable-next-line 
+        console.log(tasks);
         this.setState({ tasks });
       });
     });
@@ -64,7 +66,7 @@ class TaskList extends React.Component<{}, ITaskListState> {
           (this.state.currentView === 0) ?
             <Task key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName} onClick={this.handleBtnClick.bind(this, task.AssignmentId)}
               createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
-              priority={task.Priority} /> :
+              priority={task.Priority} state={task.State} /> :
             <TaskCard key={task.AssignmentId} id={task.AssignmentId} name={task.EntityName}
               createdBy={task.CreatedBy} createdOnDate={task.CreatedOnDate}
               priority={task.Priority} onClick={this.handleBtnClick.bind(this, task.AssignmentId)}
@@ -123,14 +125,14 @@ class TaskList extends React.Component<{}, ITaskListState> {
     // that detects when the flow engine sends 
     // a flowExecutionCompleted event without any 
     // special end step at all.
-    // const frame = event.currentTarget;
+    const frame = event.currentTarget;
     // TODO: here is the cross-origin error appears...  
     // // Uncaught DOMException: Blocked a frame with origin "http://localhost:3000" from accessing a cross-origin frame.
-    // frame.contentWindow.$("div[id^='formWrapper']").on("flowExecutionCompleted", () => {
-    //   // alert("Flow completed!!");
-    //   // document.getElementById('iframeworkflowchild').style.display = 'none';
-    //   this.setState({ iFrameURL: "" });
-    // });
+    frame.contentWindow.$("div[id^='formWrapper']").on("flowExecutionCompleted", () => {
+      // alert("Flow completed!!");
+      // document.getElementById('iframeworkflowchild').style.display = 'none';
+      this.setState({ iFrameURL: "" });
+    });
 
     // When second form in set is different size...
     // frame needs to resize at that moment.

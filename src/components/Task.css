@@ -35,6 +35,8 @@
 
 .internal-tasks__info > span { margin: 5px; }
 .internal-tasks__created { font-size: 16px; }
+.internal-tasks__priority { font-size: 16px; }
+.internal-tasks__state { font-size: 16px; }
 
 
 .task-count {
